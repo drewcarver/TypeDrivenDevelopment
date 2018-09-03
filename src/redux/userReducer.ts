@@ -1,24 +1,35 @@
-import { User } from "../types/user";
-
 const CHANGE_FIRST_NAME = 'user/changeFirstName';
 const CHANGE_LAST_NAME = 'user/changeLastName';
 const CHANGE_EMAIL = 'user/changeEmail';
 
+export type ValidatedEmail = {
+    address: string
+    isValid: boolean
+};
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; 
+const validateEmail = (email: string) : ValidatedEmail => ({
+    address: email,
+    isValid: emailRegex.test(email)
+});
+
 export const changeFirstName = (firstName: string) => ({ type: CHANGE_FIRST_NAME as typeof CHANGE_FIRST_NAME, firstName });
 export const changeLastName = (lastName: string) => ({ type: CHANGE_LAST_NAME as typeof CHANGE_LAST_NAME, lastName });
-export const changeEmail = (email: string) => ({ type: CHANGE_EMAIL as typeof CHANGE_EMAIL, email }); 
+export const changeEmail = (email: string) => ({ type: CHANGE_EMAIL as typeof CHANGE_EMAIL, email: validateEmail(email) }); 
 type UserReducerState = {
     firstName: string,
     lastName: string,
-    email: string,
+    email: ValidatedEmail,
 };
 
 type UserActions = ReturnType<typeof changeFirstName>
     | ReturnType<typeof changeLastName>
     | ReturnType<typeof changeEmail>;
 
-const DEFAULT_STATE : User = {
-    email: '',
+const DEFAULT_STATE : UserReducerState = {
+    email: {
+        address: '',
+        isValid: false,
+    },
     firstName: '',
     lastName: '',
 };

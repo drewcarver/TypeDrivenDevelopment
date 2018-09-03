@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 
 import { ReducerState } from './redux';
 import * as UserActions from './redux/userReducer';
+import { ValidatedEmail } from './redux/userReducer';
 
 type UserProps = {
     firstName: string,
     lastName: string,
-    email: string,
+    email: ValidatedEmail,
 };
 
 function withEventValue<TReturnType>(func: (input: string) => TReturnType) {
@@ -27,9 +28,10 @@ const User = (props: UserProps & typeof UserActions) => <div>
     />
     Email:
     <input 
-        value={props.email} 
+        value={props.email.address} 
         onChange={withEventValue(props.changeEmail)}
     />
+    <span>Valid Email? {props.email.isValid ? 'Yes' : 'No'}</span>
 </div>;
 
 const mapStateToProps = (state: ReducerState)  => ({ 
