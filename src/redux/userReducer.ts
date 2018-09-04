@@ -7,13 +7,9 @@ export enum ActionTypes {
     CHANGE_LAST_NAME = 'user/changeLastName',
     CHANGE_EMAIL = 'user/changeEmail',
 };
-
-// export const changeFirstName = (firstName: string) => ({ type: CHANGE_FIRST_NAME as typeof CHANGE_FIRST_NAME, firstName });
-// export const changeLastName = (lastName: string) => ({ type: CHANGE_LAST_NAME as typeof CHANGE_LAST_NAME, lastName });
-// export const changeEmail = (email: string) => ({ type: CHANGE_EMAIL as typeof CHANGE_EMAIL, email: validateEmail(email) }); 
 export const changeFirstName = (firstName: string) => createAction(ActionTypes.CHANGE_FIRST_NAME, firstName)
 export const changeLastName = (lastName: string) => createAction(ActionTypes.CHANGE_LAST_NAME, lastName);
-export const changeEmail = (email: string) => createAction(ActionTypes.CHANGE_EMAIL, email);
+export const changeEmail = (email: string) => createAction(ActionTypes.CHANGE_EMAIL, validateEmail(email));
 
 type UserReducerState = User; 
 
@@ -27,7 +23,7 @@ const DEFAULT_STATE : UserReducerState = {
     lastName: '',
 };
 
-export default (state: UserReducerState = DEFAULT_STATE, action: UserActions) => {
+export default (state: UserReducerState = DEFAULT_STATE, action: UserActions) : UserReducerState => {
     switch(action.type) {
         case ActionTypes.CHANGE_FIRST_NAME:
             return {
