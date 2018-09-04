@@ -3,13 +3,9 @@ import { connect } from 'react-redux';
 
 import { ReducerState } from './redux';
 import * as UserActions from './redux/userReducer';
-import { ValidatedEmail } from './redux/userReducer';
+import { User } from './types/User';
 
-type UserProps = {
-    firstName: string,
-    lastName: string,
-    email: ValidatedEmail,
-};
+type UserProps = User;
 
 function withEventValue<TReturnType>(func: (input: string) => TReturnType) {
     return (event: React.ChangeEvent<HTMLInputElement>) => func(event.target.value);
