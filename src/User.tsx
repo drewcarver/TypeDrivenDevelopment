@@ -27,7 +27,15 @@ const User = (props: UserProps & typeof UserActions) => <div>
         value={props.email.address} 
         onChange={withEventValue(props.changeEmail)}
     />
-    <span>Valid Email? {props.email.isValid ? 'Yes' : 'No'}</span>
+    <span>
+        {
+            props.email.match({
+                Incomplete: incompleteEmail => incompleteEmail.errors.join('|'),
+                Initial: () => '',
+                Valid: email => `${email.address} is a valid email!`
+            })
+        }
+    </span>
 </div>;
 
 const mapStateToProps = (state: ReducerState)  => ({ 

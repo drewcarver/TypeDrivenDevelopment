@@ -1,6 +1,5 @@
-import { User } from '../types/User';
+import { InitialEmail, User, ValidEmail } from '../types/User';
 import { createAction } from '../utilities/actionCreator';
-import validateEmail from '../utilities/emailValidator';
 
 export enum ActionTypes {
     CHANGE_FIRST_NAME = 'user/changeFirstName',
@@ -9,7 +8,7 @@ export enum ActionTypes {
 };
 export const changeFirstName = (firstName: string) => createAction(ActionTypes.CHANGE_FIRST_NAME, firstName)
 export const changeLastName = (lastName: string) => createAction(ActionTypes.CHANGE_LAST_NAME, lastName);
-export const changeEmail = (email: string) => createAction(ActionTypes.CHANGE_EMAIL, validateEmail(email));
+export const changeEmail = (email: string) => createAction(ActionTypes.CHANGE_EMAIL, ValidEmail.create(email));
 
 type UserReducerState = User; 
 
@@ -18,7 +17,7 @@ type UserActions = ReturnType<typeof changeFirstName>
     | ReturnType<typeof changeEmail>;
 
 const DEFAULT_STATE : UserReducerState = {
-    email: validateEmail(''),
+    email: new InitialEmail(),
     firstName: '',
     lastName: '',
 };
