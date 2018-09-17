@@ -15,7 +15,7 @@ type DiscriminateUnion<T, K extends keyof T, V extends T[K], TReturn> =
 type MapDiscriminatedUnion<T extends Record<K, string>, K extends keyof T, TReturn> =
   { [V in T[K]]: DiscriminateUnion<T, K, V, TReturn> };
 
-type MatchOptions<TReturn> = MapDiscriminatedUnion<Email, 'key', TReturn>;
+type EmailMatchOptions<TReturn> = MapDiscriminatedUnion<Email, 'key', TReturn>;
 
 // type EmailMatchOptions<TReturn> = {
 //     Initial: (initialEmail: InitialEmail) => TReturn,
@@ -23,7 +23,7 @@ type MatchOptions<TReturn> = MapDiscriminatedUnion<Email, 'key', TReturn>;
 //     Valid: (initialEmail: ValidEmail) => TReturn,
 // };
 
-export function matchEmail<TReturn>(email : Email, options : MatchOptions<TReturn>) : TReturn {
+export function matchEmail<TReturn>(email : Email, options : EmailMatchOptions<TReturn>) : TReturn {
     switch (email.key) {
         case 'Incomplete':
             return options.Incomplete(email);
@@ -62,12 +62,13 @@ abstract class EmailBase {
     } 
 
     public readonly address: string;
-
     protected abstract key : string;
 
     constructor(address: string) {
         this.address = address;
     }
+    
+    public abstract match<TReturn>(options : EmailMatchOptions<TReturn>) : TReturn;
 }
 
 export class InvalidEmail extends EmailBase {
@@ -78,12 +79,21 @@ export class InvalidEmail extends EmailBase {
         super(address);
         this.errors = errors;
     }
+
+    public match<TReturn>(options : EmailMatchOptions<TReturn>) : TReturn {
+        return matchEmail(this, options);
+    }
+
 };
 export class InitialEmail extends EmailBase {
     public readonly key = 'Initial';
 
     constructor() {
         super('');
+    }
+
+    public match<TReturn>(options : EmailMatchOptions<TReturn>) : TReturn {
+        return matchEmail(this, options);
     }
 };
 
@@ -104,4 +114,7 @@ export class ValidEmail extends EmailBase {
         this.address = email;
     }
 
+    public match<TReturn>(options : EmailMatchOptions<TReturn>) : TReturn {
+        return matchEmail(this, options);
+    }
 }
