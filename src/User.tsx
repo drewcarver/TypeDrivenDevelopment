@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { ReducerState } from './redux';
 import * as UserActions from './redux/userReducer';
+import { matchEmail } from './types/Email';
 import { User } from './types/User';
 
 type UserProps = User;
@@ -29,7 +30,7 @@ const User = (props: UserProps & typeof UserActions) => <div>
     />
     <span>
         {
-            props.email.match({
+            matchEmail(props.email, {
                 Incomplete: incompleteEmail => incompleteEmail.errors.join('|'),
                 Initial: () => '',
                 Valid: email => `${email.address} is a valid email!`

@@ -1,4 +1,5 @@
-import { InitialEmail, User, ValidEmail } from '../types/User';
+import { InitialEmail, ValidEmail } from '../types/Email';
+import { User } from '../types/User';
 import { createAction } from '../utilities/actionCreator';
 
 export enum ActionTypes {
