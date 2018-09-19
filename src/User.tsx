@@ -30,8 +30,8 @@ const User = (props: UserProps & typeof UserActions) => <div>
     <span>
         {
             props.email.match({
-                Incomplete: incompleteEmail => incompleteEmail.errors.join('|'),
                 Initial: () => '',
+                Invalid: incompleteEmail => incompleteEmail.errors.join('|'),
                 Valid: email => `${email.address} is a valid email!`
             })
         }

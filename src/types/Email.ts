@@ -1,5 +1,5 @@
 import { validation, Validation } from 'folktale';
-
+import MatchableBase, { MapDiscriminatedUnion } from './MatchableBase';
 // type EmailIJustMadeUp = { address: string, key: 'Test' };
 
 export type Email = InvalidEmail
@@ -7,48 +7,7 @@ export type Email = InvalidEmail
 | InitialEmail
 // | EmailIJustMadeUp;
 
-type ReturnFunction<TInput, TReturn> = (param : TInput) => TReturn;
-
-type DiscriminateUnion<T, K extends keyof T, V extends T[K], TReturn> = 
-  T extends Record<K, V> ? ReturnFunction<T, TReturn> : never
-
-type MapDiscriminatedUnion<T extends Record<K, string>, K extends keyof T, TReturn> =
-  { [V in T[K]]: DiscriminateUnion<T, K, V, TReturn> };
-
 type EmailMatchOptions<TReturn> = MapDiscriminatedUnion<Email, 'key', TReturn>;
-
-type MatchFunction<TInput, TUnion extends Record<TKey, string>, TKey extends keyof TUnion, TReturn> = (input : TInput, options : MapDiscriminatedUnion<TUnion, TKey, TReturn>) => TReturn;
-abstract class MatchableBase<TUnion extends Record<Key, string>, Key extends keyof TUnion> {
-    protected abstract key : string;
-    constructor(private matchFunction: MatchFunction<MatchableBase<TUnion, Key>, TUnion, Key, any>) {}
-
-    public match<TReturn>(options : MapDiscriminatedUnion<TUnion, Key, TReturn>) { 
-            return this.matchFunction(this, options);        
-    }
-}
-
-abstract class EmailBase extends MatchableBase<Email, 'key'> {
-    constructor() {
-        super(matchEmail);
-    }
-}
-
-// type EmailMatchOptions<TReturn> = {
-//     Initial: (initialEmail: InitialEmail) => TReturn,
-//     Incomplete: (initialEmail: InvalidEmail) => TReturn,
-//     Valid: (initialEmail: ValidEmail) => TReturn,
-// };
-
-function matchEmail<TReturn>(email : Email, options : EmailMatchOptions<TReturn>) : TReturn {
-    switch (email.key) {
-        case 'Incomplete':
-            return options.Incomplete(email);
-        case 'Initial':
-            return options.Initial(email);
-        case 'Valid':
-            return options.Valid(email);
-    }
-}
 
 function validateEmail(email: string) : Validation<string[], string> {
     return validation.Success<string[], string>(email)
@@ -76,17 +35,25 @@ function doesntPassEmailRegex(email : string) : Validation<string[], string> {
         : validation.Failure(['Doesnt pass the email regex']);
 }
 
-export class InvalidEmail extends EmailBase {
-    public readonly key = 'Incomplete';
+export class InvalidEmail extends MatchableBase<Email, 'key'> {
+    public readonly key = 'Invalid';
 
     constructor(public readonly address: string, public readonly errors: string[]) { super(); }
+
+    public match<TReturn>(options : EmailMatchOptions<TReturn>) {
+        return options.Invalid(this);
+    }
 };
-export class InitialEmail extends EmailBase {
+export class InitialEmail extends MatchableBase<Email, 'key'> {
     public readonly key = 'Initial';
     public readonly address = '';
+
+    public match<TReturn>(options : EmailMatchOptions<TReturn>) {
+        return options.Initial(this);
+    }
 };
 
-export class ValidEmail extends EmailBase {
+export class ValidEmail extends MatchableBase<Email, 'key'> {
     public static create(possibleEmail : string) : Email {
         return validateEmail(possibleEmail)
             .matchWith<Email>({
@@ -97,7 +64,8 @@ export class ValidEmail extends EmailBase {
 
     public readonly key = 'Valid';
     private constructor(public readonly address : string) { super(); }
-}
 
-// export class EmailIJustMadeUp {
-// }
+    public match<TReturn>(options : EmailMatchOptions<TReturn>) {
+        return options.Valid(this);
+    }
+}
