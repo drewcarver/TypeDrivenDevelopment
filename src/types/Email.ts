@@ -2,9 +2,9 @@ import { validation, Validation } from 'folktale';
 
 // type EmailIJustMadeUp = { address: string, key: 'Test' };
 
-export type Email = InvalidEmail
-| ValidEmail
-| InitialEmail
+export type Email = WithMatch(InvalidEmail, matchEmail),
+| WithMatch(ValidEmail, matchEmail)
+| WithMatch(InitialEmail, matchEmail)
 // | EmailIJustMadeUp;
 
 type ReturnFunction<TInput, TReturn> = (param : TInput) => TReturn;
@@ -20,6 +20,17 @@ type EmailMatchOptions<TReturn> = MapDiscriminatedUnion<Email, 'key', TReturn>;
 interface IMatchable<TUnion extends Record<Key, string>, Key extends keyof TUnion> {
     key : string;
     match<TReturn>(options : MapDiscriminatedUnion<TUnion, Key, TReturn>) : TReturn;
+}
+
+type Constructor<T = {}> = new (...args: any[]) => T;
+
+type MatchFunction<TInput, TUnion extends Record<TKey, string>, TKey extends keyof TUnion, TReturn> = (input : TInput, options : MapDiscriminatedUnion<TUnion, TKey, TReturn>) => TReturn;
+function WithMatch<TBase extends Constructor, TUnion extends Record<Key, string>, Key extends keyof TUnion, TReturn>(Base: TBase, matchFunction : MatchFunction<TBase, TUnion, Key, TReturn>) {
+    return class extends Base {
+        public match(options : MapDiscriminatedUnion<TUnion, Key, TReturn>) : TReturn {
+            return matchFunction(Base, options);
+        }
+    };
 }
 
 // type EmailMatchOptions<TReturn> = {
