@@ -80,10 +80,6 @@ export class InvalidEmail extends EmailBase {
     public readonly key = 'Incomplete';
 
     constructor(public readonly address: string, public readonly errors: string[]) { super(); }
-
-    public match<TReturn>(options : EmailMatchOptions<TReturn>) {
-        return matchEmail(this, options);
-    }
 };
 export class InitialEmail extends EmailBase {
     public readonly key = 'Initial';
