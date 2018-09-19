@@ -17,15 +17,9 @@ type MapDiscriminatedUnion<T extends Record<K, string>, K extends keyof T, TRetu
 
 type EmailMatchOptions<TReturn> = MapDiscriminatedUnion<Email, 'key', TReturn>;
 
-interface IMatchable<TUnion extends Record<Key, string>, Key extends keyof TUnion> {
-    key : string;
-    match<TReturn>(options : MapDiscriminatedUnion<TUnion, Key, TReturn>) : TReturn;
-}
-
 type MatchFunction<TInput, TUnion extends Record<TKey, string>, TKey extends keyof TUnion, TReturn> = (input : TInput, options : MapDiscriminatedUnion<TUnion, TKey, TReturn>) => TReturn;
 abstract class MatchableBase<TUnion extends Record<Key, string>, Key extends keyof TUnion> {
-    key : string;
-
+    protected abstract key : string;
     constructor(private matchFunction: MatchFunction<MatchableBase<TUnion, Key>, TUnion, Key, any>) {}
 
     public match<TReturn>(options : MapDiscriminatedUnion<TUnion, Key, TReturn>) { 

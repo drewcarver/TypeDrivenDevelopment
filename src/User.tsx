@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import { ReducerState } from './redux';
 import * as UserActions from './redux/userReducer';
-import { matchEmail } from './types/Email';
 import { User } from './types/User';
 
 type UserProps = User;
