@@ -5,7 +5,9 @@ import { ReducerState } from './redux';
 import * as UserActions from './redux/userReducer';
 import { User } from './types/User';
 
-type UserProps = User;
+type UserProps = { 
+    user: User
+};
 
 function withEventValue<TReturnType>(func: (input: string) => TReturnType) {
     return (event: React.ChangeEvent<HTMLInputElement>) => func(event.target.value);
@@ -14,34 +16,33 @@ function withEventValue<TReturnType>(func: (input: string) => TReturnType) {
 const User = (props: UserProps & typeof UserActions) => <div>
     First Name:
     <input 
-        value={props.firstName} 
+        value={props.user.firstName} 
         onChange={withEventValue(props.changeFirstName)}
     />
     Last Name:
     <input 
-        value={props.lastName}
+        value={props.user.lastName}
         onChange={withEventValue(props.changeLastName)}
     />
     Email:
     <input 
-        value={props.email.address} 
+        value={props.user.email.address} 
         onChange={withEventValue(props.changeEmail)}
     />
     <span>
         {
-            props.email.match({
+            props.user.email.match({
                 Initial: () => '',
                 Invalid: incompleteEmail => incompleteEmail.errors.join('|'),
                 Valid: email => `${email.address} is a valid email!`
             })
         }
     </span>
+    <button onClick={props.save}>Save</button>
 </div>;
 
 const mapStateToProps = (state: ReducerState)  => ({ 
-    email: state.user.email,
-    firstName: state.user.firstName,
-    lastName: state.user.lastName,
+    user: state.user
 });
 
 export default connect(mapStateToProps, { ...UserActions })(User);
