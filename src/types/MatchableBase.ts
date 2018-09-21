@@ -12,4 +12,9 @@ abstract class MatchableBase<TUnion extends Record<Key, string>, Key extends key
     public abstract match<TReturn>(options : MapDiscriminatedUnion<TUnion, Key, TReturn>) : TReturn;
 }
 
+export interface IMatchable<TUnion extends Record<'key', string>> { 
+    key : string;
+    match<TReturn>(options : MapDiscriminatedUnion<TUnion, 'key', TReturn>) : TReturn;
+}
+
 export default MatchableBase;

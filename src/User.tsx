@@ -16,13 +16,13 @@ function withEventValue<TReturnType>(func: (input: string) => TReturnType) {
 const User = (props: UserProps & typeof UserActions) => <div>
     First Name:
     <input 
-        value={props.user.firstName} 
-        onChange={withEventValue(props.changeFirstName)}
+        value={props.user.name.firstName} 
+        onChange={withEventValue(firstName => props.changeName(firstName, props.user.name.lastName))}
     />
     Last Name:
     <input 
-        value={props.user.lastName}
-        onChange={withEventValue(props.changeLastName)}
+        value={props.user.name.lastName}
+        onChange={withEventValue(lastName => props.changeName(props.user.name.firstName, lastName))}
     />
     Email:
     <input 

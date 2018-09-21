@@ -1,5 +1,6 @@
 import { Email, ValidEmail } from "./Email";
 import MatchableBase, { MapDiscriminatedUnion } from "./MatchableBase";
+import { CompleteNameInformation, NameInformation } from './NameInformation';
 
 type UserMatchOptions<TReturn> = MapDiscriminatedUnion<User, 'key', TReturn>;
 
@@ -8,9 +9,8 @@ export type User = IncompleteUser | CompleteUser | SavedUser;
 export class IncompleteUser extends MatchableBase<User, 'key'> {
     public readonly key = 'Incomplete';
 
-    constructor(public readonly firstName: string,
-        public readonly lastName: string,
-        public readonly email: Exclude<Email, ValidEmail>) { super(); }
+    constructor(public readonly name: NameInformation,
+        public readonly email: Email) { super(); }
 
     public match<TReturn>(options : UserMatchOptions<TReturn>) {
         return options.Incomplete(this);
@@ -18,18 +18,20 @@ export class IncompleteUser extends MatchableBase<User, 'key'> {
 }
 
 export class CompleteUser extends MatchableBase<User, 'key'> {
-    public static create(firstName : string, lastName: string, email : Email) : User {
-        return email.match<User>({
-            Initial: (initialEmail) => new IncompleteUser(firstName, lastName, initialEmail),
-            Invalid: (invalidEmail) => new IncompleteUser(firstName, lastName, invalidEmail),
-            Valid: (validEmail) => new CompleteUser(firstName, lastName, validEmail)
+    public static create(nameInformation : NameInformation, email : Email) : User {
+        return email.match({
+            Initial: (initialEmail) => new IncompleteUser(nameInformation, initialEmail),
+            Invalid: (invalidEmail) => new IncompleteUser(nameInformation, invalidEmail),
+            Valid: validEmail => nameInformation.match<User>({
+                Complete: completeName => new CompleteUser(completeName, validEmail),
+                Incomplete: incompleteName => new IncompleteUser(incompleteName, validEmail),
+            }),
         })
     }
 
     public readonly key = 'Complete';
 
-    private constructor(public readonly firstName: string,
-        public readonly lastName: string,
+    private constructor(public readonly name: CompleteNameInformation,
         public readonly email: ValidEmail) { super(); }
 
     public match<TReturn>(options : UserMatchOptions<TReturn>) : TReturn {
@@ -40,8 +42,7 @@ export class CompleteUser extends MatchableBase<User, 'key'> {
 export class SavedUser extends MatchableBase<User, 'key'> {
     public readonly key = 'Saved';
 
-    public constructor(public readonly firstName: string,
-        public readonly lastName: string,
+    public constructor(public readonly name: CompleteNameInformation,
         public readonly email: ValidEmail,
         public readonly userId: number) { super(); }
 
