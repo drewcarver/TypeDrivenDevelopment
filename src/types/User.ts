@@ -1,23 +1,23 @@
 import { Email, ValidEmail } from "./Email";
-import MatchableBase, { MapDiscriminatedUnion } from "./MatchableBase";
+import { IMatchable, MapDiscriminatedUnion } from "./IMatchable";
 import { CompleteNameInformation, NameInformation } from './NameInformation';
 
 type UserMatchOptions<TReturn> = MapDiscriminatedUnion<User, 'key', TReturn>;
 
 export type User = IncompleteUser | CompleteUser | SavedUser; 
 
-export class IncompleteUser extends MatchableBase<User, 'key'> {
+export class IncompleteUser implements IMatchable<User> {
     public readonly key = 'Incomplete';
 
     constructor(public readonly name: NameInformation,
-        public readonly email: Email) { super(); }
+        public readonly email: Email) { }
 
     public match<TReturn>(options : UserMatchOptions<TReturn>) {
         return options.Incomplete(this);
     }
 }
 
-export class CompleteUser extends MatchableBase<User, 'key'> {
+export class CompleteUser implements IMatchable<User> {
     public static create(nameInformation : NameInformation, email : Email) : User {
         return email.match({
             Initial: (initialEmail) => new IncompleteUser(nameInformation, initialEmail),
@@ -32,19 +32,19 @@ export class CompleteUser extends MatchableBase<User, 'key'> {
     public readonly key = 'Complete';
 
     private constructor(public readonly name: CompleteNameInformation,
-        public readonly email: ValidEmail) { super(); }
+        public readonly email: ValidEmail) { }
 
     public match<TReturn>(options : UserMatchOptions<TReturn>) : TReturn {
         return options.Complete(this);
     }
 }
 
-export class SavedUser extends MatchableBase<User, 'key'> {
+export class SavedUser implements IMatchable<User> {
     public readonly key = 'Saved';
 
     public constructor(public readonly name: CompleteNameInformation,
         public readonly email: ValidEmail,
-        public readonly userId: number) { super(); }
+        public readonly userId: number) { }
 
     public match<TReturn>(options : UserMatchOptions<TReturn>) : TReturn {
         return options.Saved(this);

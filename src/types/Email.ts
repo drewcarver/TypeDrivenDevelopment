@@ -1,25 +1,23 @@
 import validateEmail from '../utilities/validateEmail';
-import MatchableBase, { MapDiscriminatedUnion } from './MatchableBase';
-// type EmailIJustMadeUp = { address: string, key: 'Test' };
+import { IMatchable, MapDiscriminatedUnion } from './IMatchable';
 
 export type Email = InvalidEmail
 | ValidEmail
 | InitialEmail;
-// | EmailIJustMadeUp;
 
 type EmailMatchOptions<TReturn> = MapDiscriminatedUnion<Email, 'key', TReturn>;
 
-export class InvalidEmail extends MatchableBase<Email, 'key'> {
+export class InvalidEmail implements IMatchable<Email> {
     public readonly key = 'Invalid';
 
-    constructor(public readonly address: string, public readonly errors: string[]) { super(); }
+    constructor(public readonly address: string, public readonly errors: string[]) { }
 
     public match<TReturn>(options : EmailMatchOptions<TReturn>) {
         return options.Invalid(this);
     }
 };
 
-export class InitialEmail extends MatchableBase<Email, 'key'> {
+export class InitialEmail implements IMatchable<Email> {
     public readonly key = 'Initial';
     public readonly address = '';
 
@@ -28,7 +26,7 @@ export class InitialEmail extends MatchableBase<Email, 'key'> {
     }
 };
 
-export class ValidEmail extends MatchableBase<Email, 'key'> {
+export class ValidEmail implements IMatchable<Email> {
     public static create(possibleEmail : string) : Email {
         return validateEmail(possibleEmail)
             .matchWith<Email>({
@@ -38,7 +36,7 @@ export class ValidEmail extends MatchableBase<Email, 'key'> {
     }  
 
     public readonly key = 'Valid';
-    private constructor(public readonly address : string) { super(); }
+    private constructor(public readonly address : string) { }
 
     public match<TReturn>(options : EmailMatchOptions<TReturn>) {
         return options.Valid(this);

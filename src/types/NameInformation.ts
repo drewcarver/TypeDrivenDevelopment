@@ -1,4 +1,4 @@
-import { IMatchable, MapDiscriminatedUnion } from "./MatchableBase";
+import { IMatchable, MapDiscriminatedUnion } from "./IMatchable";
 
 export type NameInformation = CompleteNameInformation
 | IncompleteNameInformation;
