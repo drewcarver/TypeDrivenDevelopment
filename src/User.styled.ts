@@ -5,9 +5,16 @@ export const UserContainer = styled.div`
   flex-direction: column;
   align-content: center;
   align-items: center;
-  width: 50%;
+`;
+
+export const FieldWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  padding: 1vh 1vw;
 `;
 
 export const Field = styled.div`
-  padding: 10px, 10px;
+  padding: 1vh 1vw;
 `;
