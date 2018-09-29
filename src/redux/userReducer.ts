@@ -4,7 +4,7 @@ import { InitialEmail, ValidEmail } from '../types/Email';
 import { IncompleteUser, User } from '../types/User';
 import { createAction } from '../utilities/actionCreator';
 import { CompleteNameInformation, IncompleteNameInformation } from './../types/NameInformation';
-import { CompleteUser, SavedUser } from './../types/User';
+import { CompleteUser, matchUser, SavedUser } from './../types/User';
 import { GetState } from './index';
 
 export enum ActionTypes {
@@ -18,7 +18,7 @@ export const changeEmail = (email: string) => createAction(ActionTypes.CHANGE_EM
 const saveSuccessful = (user : SavedUser) => createAction(ActionTypes.SAVE_SUCCESSS, user);
 
 export const save = () => (dispatch : Dispatch, getState : GetState) => {
-    return getState().user.match<Promise<User>>({
+    return matchUser<Promise<User>>(getState().user, {
         Complete: (completeUser) => saveUser(completeUser).then((savedUser) => { 
             dispatch(saveSuccessful(savedUser));
             return Promise.resolve(savedUser);

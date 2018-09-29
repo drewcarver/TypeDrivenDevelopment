@@ -1,32 +1,35 @@
 import validateEmail from '../utilities/validateEmail';
-import { IMatchable, MapDiscriminatedUnion } from './IMatchable';
+import { MapDiscriminatedUnion } from './MapDiscriminatedUnion';
+
+type EmailMatchOptions<TReturn> = MapDiscriminatedUnion<Email, 'key', TReturn>;
 
 export type Email = InvalidEmail
 | ValidEmail
 | InitialEmail;
 
-type EmailMatchOptions<TReturn> = MapDiscriminatedUnion<Email, 'key', TReturn>;
+export function matchEmail<TReturn>(email : Email, options: EmailMatchOptions<TReturn>) {
+    switch(email.key) {
+        case "Initial":
+            return options.Initial(email);
+        case "Invalid":
+            return options.Invalid(email);
+        case "Valid":
+            return options.Valid(email);
+    }
+}
 
-export class InvalidEmail implements IMatchable<Email> {
+export class InvalidEmail {
     public readonly key = 'Invalid';
 
     constructor(public readonly address: string, public readonly errors: string[]) { }
-
-    public match<TReturn>(options : EmailMatchOptions<TReturn>) {
-        return options.Invalid(this);
-    }
 };
 
-export class InitialEmail implements IMatchable<Email> {
+export class InitialEmail {
     public readonly key = 'Initial';
     public readonly address = '';
-
-    public match<TReturn>(options : EmailMatchOptions<TReturn>) {
-        return options.Initial(this);
-    }
 };
 
-export class ValidEmail implements IMatchable<Email> {
+export class ValidEmail {
     public static create(possibleEmail : string) : Email {
         return validateEmail(possibleEmail)
             .matchWith<Email>({
@@ -37,8 +40,4 @@ export class ValidEmail implements IMatchable<Email> {
 
     public readonly key = 'Valid';
     private constructor(public readonly address : string) { }
-
-    public match<TReturn>(options : EmailMatchOptions<TReturn>) {
-        return options.Valid(this);
-    }
 }
