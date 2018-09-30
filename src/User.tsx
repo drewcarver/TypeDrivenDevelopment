@@ -66,11 +66,7 @@ const User = (props: UserProps & typeof UserActions) => (
                   ))}
                 </React.Fragment>
               ),
-              Valid: email => (
-                <FormHelperText>
-                  {`${email.address} is a valid email!`}
-                </FormHelperText>
-              )
+              Valid: () => ""
             })}
           </FormControl>
         </Field>
