@@ -1,5 +1,15 @@
-import { Button, FormControl, FormHelperText, Icon, Input, InputAdornment, InputLabel, Paper, TextField } from "@material-ui/core";
-import Check from '@material-ui/icons/Check';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  Icon,
+  Input,
+  InputAdornment,
+  InputLabel,
+  Paper,
+  TextField
+} from "@material-ui/core";
+import Check from "@material-ui/icons/Check";
 import * as React from "react";
 import { connect } from "react-redux";
 import { ReducerState } from "./redux";
@@ -25,6 +35,7 @@ const User = (props: UserProps & typeof UserActions) => (
           <TextField
             label="First Name"
             value={props.user.name.firstName}
+            style={{ width: "20vw" }}
             onChange={withEventValue(firstName =>
               props.changeName(firstName, props.user.name.lastName)
             )}
@@ -34,6 +45,7 @@ const User = (props: UserProps & typeof UserActions) => (
           <TextField
             label="Last Name"
             value={props.user.name.lastName}
+            style={{ width: "20vw" }}
             onChange={withEventValue(lastName =>
               props.changeName(props.user.name.firstName, lastName)
             )}
@@ -42,20 +54,23 @@ const User = (props: UserProps & typeof UserActions) => (
         <Field>
           <FormControl>
             <InputLabel htmlFor="email">Email Address</InputLabel>
-            <Input 
+            <Input
               id="email"
               type="text"
               value={props.user.email.address}
+              style={{ width: "20vw" }}
               onChange={withEventValue(props.changeEmail)}
               endAdornment={
-                props.user.email.key === "Valid"
-                ? <InputAdornment position="end">
+                props.user.email.key === "Valid" ? (
+                  <InputAdornment position="end">
                     <Icon>
                       <Check style={{ color: "green" }} />
                     </Icon>
                   </InputAdornment>
-                : ''
-              } 
+                ) : (
+                  ""
+                )
+              }
             />
             {matchEmail<JSX.Element | string>(props.user.email, {
               Initial: () => "",
@@ -70,7 +85,13 @@ const User = (props: UserProps & typeof UserActions) => (
             })}
           </FormControl>
         </Field>
-        <Button variant="contained" onClick={props.save}>Save</Button>
+        <Button
+          variant="contained"
+          disabled={props.user.key === "Incomplete"}
+          onClick={props.save}
+        >
+          Save
+        </Button>
       </FieldWrapper>
     </Paper>
   </UserContainer>

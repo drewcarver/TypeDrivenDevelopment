@@ -5,6 +5,9 @@ export const UserContainer = styled.div`
   flex-direction: column;
   align-content: center;
   align-items: center;
+  justify-self: center;
+  height: 100%;
+  margin-top: 5vh;
 `;
 
 export const FieldWrapper = styled.div`
