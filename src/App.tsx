@@ -1,12 +1,12 @@
 import * as React from 'react';
 import './App.css';
-import User from './User';
+import UserForm from './UserForm';
 
 
 class App extends React.Component {
   public render() {
     return (
-        <User />
+        <UserForm />
     );
   }
 }

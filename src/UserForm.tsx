@@ -1,24 +1,14 @@
-import {
-  Button,
-  FormControl,
-  FormHelperText,
-  Icon,
-  Input,
-  InputAdornment,
-  InputLabel,
-  Paper,
-  TextField
-} from "@material-ui/core";
+import { Button, FormControl, FormHelperText, Icon, Input, InputAdornment, InputLabel, Paper, TextField } from "@material-ui/core";
 import Check from "@material-ui/icons/Check";
 import * as React from "react";
 import { connect } from "react-redux";
 import { ReducerState } from "./redux";
 import * as UserActions from "./redux/userReducer";
 import { matchEmail } from "./types/Email";
-import { User } from "./types/User";
+import { IncompleteUser, User } from "./types/User";
 import { Field, FieldWrapper, UserContainer } from "./User.styled";
 
-type UserProps = {
+type UserFormProps = {
   user: User;
 };
 
@@ -27,7 +17,7 @@ function withEventValue<TReturnType>(func: (input: string) => TReturnType) {
     func(event.target.value);
 }
 
-const User = (props: UserProps & typeof UserActions) => (
+const UserForm = (props: UserFormProps & typeof UserActions) => (
   <UserContainer>
     <Paper>
       <FieldWrapper>
@@ -60,19 +50,19 @@ const User = (props: UserProps & typeof UserActions) => (
               value={props.user.email.address}
               style={{ width: "20vw" }}
               onChange={withEventValue(props.changeEmail)}
-              endAdornment={
-                props.user.email.key === "Valid" ? (
+              endAdornment={matchEmail<React.ReactNode>(props.user.email, {
+                Initial: () => "",
+                Invalid: () => "",
+                Valid: () => (
                   <InputAdornment position="end">
                     <Icon>
                       <Check style={{ color: "green" }} />
                     </Icon>
                   </InputAdornment>
-                ) : (
-                  ""
                 )
-              }
+              })}
             />
-            {matchEmail<JSX.Element | string>(props.user.email, {
+            {matchEmail<React.ReactNode>(props.user.email, {
               Initial: () => "",
               Invalid: incompleteEmail => (
                 <React.Fragment>
@@ -87,7 +77,7 @@ const User = (props: UserProps & typeof UserActions) => (
         </Field>
         <Button
           variant="contained"
-          disabled={props.user.key === "Incomplete"}
+          disabled={props.user instanceof IncompleteUser}
           onClick={props.save}
         >
           Save
@@ -104,4 +94,4 @@ const mapStateToProps = (state: ReducerState) => ({
 export default connect(
   mapStateToProps,
   { ...UserActions }
-)(User);
+)(UserForm);
