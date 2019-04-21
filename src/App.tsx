@@ -1,12 +1,12 @@
 import * as React from 'react';
 import './App.css';
-import UserForm from './UserForm';
+import SignUpForm from './SignUpForm';
 
 
 class App extends React.Component {
   public render() {
     return (
-        <UserForm />
+        <SignUpForm />
     );
   }
 }

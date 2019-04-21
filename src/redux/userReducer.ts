@@ -1,20 +1,19 @@
 import { Dispatch } from 'redux';
+import { EmptyPassword, Password } from 'src/types/Password';
 import { saveUser } from '../api/userApi';
-import { InitialEmail, ValidEmail } from '../types/Email';
+import { Email, InitialEmail } from '../types/Email';
 import { IncompleteUser, User } from '../types/User';
 import { createAction } from '../utilities/actionCreator';
-import { CompleteNameInformation, IncompleteNameInformation } from './../types/NameInformation';
+import { IncompleteNameInformation, NameInformation } from './../types/NameInformation';
 import { CompleteUser, matchUser, SavedUser } from './../types/User';
 import { GetState } from './index';
 
 export enum ActionTypes {
-    CHANGE_EMAIL = 'user/changeEmail',
-    CHANGE_NAME = 'user/changeName',
+    CHANGE_USER = 'user/changeUser',
     SAVE_SUCCESSS = 'user/saveSuccessful',
     SAVE_USER = 'user/save',
 };
-export const changeName = (firstName : string, lastName : string) => createAction(ActionTypes.CHANGE_NAME, CompleteNameInformation.create(firstName, lastName));
-export const changeEmail = (email: string) => createAction(ActionTypes.CHANGE_EMAIL, ValidEmail.create(email));
+export const changeUser = (name: NameInformation, email : Email, password: Password) => createAction(ActionTypes.CHANGE_USER, CompleteUser.create(name, email, password));
 const saveSuccessful = (user : SavedUser) => createAction(ActionTypes.SAVE_SUCCESSS, user);
 
 export const save = () => (dispatch : Dispatch, getState : GetState) => {
@@ -30,18 +29,15 @@ export const save = () => (dispatch : Dispatch, getState : GetState) => {
 
 type UserReducerState = User; 
 
-type UserActions = ReturnType<typeof changeName>
-    | ReturnType<typeof saveSuccessful>
-    | ReturnType<typeof changeEmail>;
+type UserActions = ReturnType<typeof changeUser>
+    | ReturnType<typeof saveSuccessful>;
 
-const DEFAULT_STATE : UserReducerState = new IncompleteUser(new IncompleteNameInformation('', ''), new InitialEmail());
+const DEFAULT_STATE : UserReducerState = new IncompleteUser(new IncompleteNameInformation('', ''), new InitialEmail(), new EmptyPassword());
 
 export default (state: UserReducerState = DEFAULT_STATE, action: UserActions) : UserReducerState => {
     switch(action.type) {
-        case ActionTypes.CHANGE_NAME:
-            return CompleteUser.create(action.payload, state.email);
-        case ActionTypes.CHANGE_EMAIL:
-            return CompleteUser.create(state.name, action.payload);
+        case ActionTypes.CHANGE_USER:
+            return action.payload;
         case ActionTypes.SAVE_SUCCESSS:
             return action.payload;
         default:

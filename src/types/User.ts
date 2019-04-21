@@ -1,6 +1,7 @@
 import { Email, matchEmail, ValidEmail } from "./Email";
 import { MapDiscriminatedUnion } from "./MapDiscriminatedUnion";
 import { CompleteNameInformation, matchName, NameInformation } from './NameInformation';
+import { matchPassword, Password, ValidPassword } from "./Password";
 
 type UserMatchOptions<TReturn> = MapDiscriminatedUnion<User, 'key', TReturn>;
 
@@ -21,21 +22,22 @@ export class IncompleteUser {
     public readonly key = 'Incomplete';
 
     constructor(public readonly name: NameInformation,
-        public readonly email: Email) { }
-
-    public match<TReturn>(options : UserMatchOptions<TReturn>) {
-        return options.Incomplete(this);
-    }
+        public readonly email: Email,
+        public readonly password: Password) { }
 }
 
 export class CompleteUser {
-    public static create(nameInformation : NameInformation, email : Email) : User {
+    public static create(nameInformation : NameInformation, email : Email, password: Password) : User {
         return matchEmail(email, {
-            Initial: (initialEmail) => new IncompleteUser(nameInformation, initialEmail),
-            Invalid: (invalidEmail) => new IncompleteUser(nameInformation, invalidEmail),
+            Initial: (initialEmail) => new IncompleteUser(nameInformation, initialEmail, password),
+            Invalid: (invalidEmail) => new IncompleteUser(nameInformation, invalidEmail, password),
             Valid: validEmail => matchName<User>(nameInformation, {
-                Complete: completeName => new CompleteUser(completeName, validEmail),
-                Incomplete: incompleteName => new IncompleteUser(incompleteName, validEmail),
+                Complete: completeName => matchPassword<User>(password, {
+                  EmptyPassword: emptyPassword => new IncompleteUser(completeName, validEmail, emptyPassword),
+                  InvalidPassword: invalidPassword => new IncompleteUser(completeName, validEmail, invalidPassword),
+                  ValidPassword: validPassword => new CompleteUser(completeName, validEmail, validPassword),
+                }), 
+                Incomplete: incompleteName => new IncompleteUser(incompleteName, validEmail, password),
             }),
         })
     }
@@ -43,7 +45,7 @@ export class CompleteUser {
     public readonly key = 'Complete';
 
     private constructor(public readonly name: CompleteNameInformation,
-        public readonly email: ValidEmail) { }
+        public readonly email: ValidEmail, public readonly password: ValidPassword) { }
 }
 
 export class SavedUser {
@@ -51,5 +53,6 @@ export class SavedUser {
 
     public constructor(public readonly name: CompleteNameInformation,
         public readonly email: ValidEmail,
+        public readonly password: ValidPassword,
         public readonly userId: number) { }
 }
