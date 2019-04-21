@@ -17,11 +17,11 @@ import * as UserActions from "./redux/userReducer";
 import { matchEmail, ValidEmail } from "./types/Email";
 import { CompleteNameInformation } from "./types/NameInformation";
 import { matchPassword, ValidPassword } from "./types/Password";
-import { IncompleteUser, User } from "./types/User";
 import { Field, FieldWrapper, UserContainer } from "./User.styled";
+import { User } from "./redux/userReducer";
 
 type SignUpFormProps = {
-  user: User;
+  user: UserActions.UserReducerState;
 } & typeof UserActions;
 
 function withEventValue<TReturnType>(func: (input: string) => TReturnType) {
@@ -37,15 +37,14 @@ const SignUpForm = (props: SignUpFormProps) => (
           <Field>
             <TextField
               label="First Name"
-              value={props.user.name.firstName}
+              value={props.user.firstName}
               onChange={withEventValue(firstName =>
                 props.changeUser(
-                  CompleteNameInformation.create(
-                    firstName,
-                    props.user.name.lastName
-                  ),
+                  firstName,
+                  props.user.lastName,
                   props.user.email,
-                  props.user.password
+                  props.user.password,
+                  props.user.confirmPassword
                 )
               )}
             />
@@ -53,15 +52,14 @@ const SignUpForm = (props: SignUpFormProps) => (
           <Field>
             <TextField
               label="Last Name"
-              value={props.user.name.lastName}
+              value={props.user.lastName}
               onChange={withEventValue(lastName =>
                 props.changeUser(
-                  CompleteNameInformation.create(
-                    props.user.name.firstName,
-                    lastName
-                  ),
+                  props.user.firstName,
+                  lastName,
                   props.user.email,
-                  props.user.password
+                  props.user.password,
+                  props.user.confirmPassword
                 )
               )}
             />
