@@ -70,27 +70,26 @@ const SignUpForm = (props: SignUpFormProps) => (
               <Input
                 id="email"
                 type="text"
-                value={props.user.email.address}
+                value={props.user.email}
                 onChange={withEventValue(email =>
                   props.changeUser(
-                    props.user.name,
-                    ValidEmail.create(email),
-                    props.user.password
+                    props.user.firstName,
+                    props.user.lastName,
+                    props.user.email,
+                    props.user.password,
+                    props.user.confirmPassword
                   )
                 )}
-                endAdornment={matchEmail<React.ReactNode>(props.user.email, {
-                  Initial: () => "",
-                  Invalid: () => "",
-                  Valid: () => (
+                endAdornment={props.user.isEmailValid && (
                     <InputAdornment position="end">
                       <Icon>
                         <Check style={{ color: "green" }} />
                       </Icon>
                     </InputAdornment>
                   )
-                })}
+                }
               />
-              {matchEmail<React.ReactNode>(props.user.email, {
+              {!props.user.isEmailValid && props.user. {
                 Initial: () => "",
                 Invalid: incompleteEmail => (
                   <React.Fragment>
