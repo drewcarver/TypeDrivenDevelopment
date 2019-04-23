@@ -1,8 +1,8 @@
-import { Dispatch } from 'redux';
-import validateEmail from 'src/utilities/validateEmail';
-import validatePassword from 'src/utilities/validPassword';
-import { createAction } from '../utilities/actionCreator';
-import { GetState } from './index';
+import { Dispatch } from "redux";
+import validateEmail from "src/utilities/validateEmail";
+import validatePassword from "src/utilities/validPassword";
+import { createAction } from "../utilities/actionCreator";
+import { GetState } from "./index";
 
 export type User = {
   firstName: string;
@@ -13,10 +13,11 @@ export type User = {
 };
 
 export enum ActionTypes {
-  CHANGE_USER = 'user/changeUser',
-  SAVE_SUCCESSS = 'user/saveSuccessful',
-  SAVE_USER = 'user/save'
+  CHANGE_USER = "user/changeUser",
+  SAVE_SUCCESSS = "user/saveSuccessful",
+  SAVE_USER = "user/save"
 }
+
 export const changeUser = (
   firstName: string,
   lastName: string,
@@ -31,9 +32,9 @@ export const changeUser = (
     lastName,
     password
   });
-const saveSuccessful = (user: User) =>
-  createAction(ActionTypes.SAVE_SUCCESSS, user);
 
+export const saveSuccessful = (user: User) =>
+  createAction(ActionTypes.SAVE_SUCCESSS, user);
 export const save = () => (dispatch: Dispatch, getState: GetState) => {
   const savedUser = getState().user;
   dispatch(saveSuccessful(savedUser));
@@ -57,16 +58,35 @@ type UserActions =
   | ReturnType<typeof saveSuccessful>;
 
 const DEFAULT_STATE: UserReducerState = {
-  confirmPassword: '',
-  email: '',
+  confirmPassword: "",
+  email: "",
   emailErrors: [],
-  firstName: '',
+  firstName: "",
   isEmailValid: false,
   isPasswordValid: false,
-  lastName: '',
-  password: '',
+  lastName: "",
+  password: "",
   passwordErrors: []
 };
+
+const getEmailErrors = (email: string) =>
+  email !== ""
+    ? validateEmail(email).matchWith({
+        Failure: errors => errors.value,
+        Success: () => []
+      })
+    : [];
+
+const getPasswordErrors = (password: string, confirmPassword: string) =>
+  password !== ""
+    ? validatePassword({
+        confirmationPassword: confirmPassword,
+        originalPassword: password
+      }).matchWith({
+        Failure: errors => errors.value,
+        Success: () => []
+      })
+    : [];
 
 export default (
   state: UserReducerState = DEFAULT_STATE,
@@ -74,24 +94,21 @@ export default (
 ): UserReducerState => {
   switch (action.type) {
     case ActionTypes.CHANGE_USER:
-      const emailErrors = validateEmail(action.payload.email).matchWith({
-        Failure: errors => errors.value,
-        Success: () => []
-      });
-      const passwordErrors = validatePassword({
-        confirmationPassword: action.payload.confirmPassword,
-        originalPassword: action.payload.password
-      }).matchWith({
-        Failure: errors => errors.value,
-        Success: () => []
-      });
+      const emailErrors = getEmailErrors(action.payload.email);
+      const passwordErrors = getPasswordErrors(
+        action.payload.password,
+        action.payload.confirmPassword
+      );
 
       return {
         ...state,
         ...action.payload,
         emailErrors,
-        isEmailValid: emailErrors.length === 0,
-        isPasswordValid: passwordErrors.length === 0,
+        isEmailValid: action.payload.email !== "" && emailErrors.length === 0,
+        isPasswordValid:
+          action.payload.password.length > 0 &&
+          action.payload.confirmPassword.length > 0 &&
+          passwordErrors.length === 0,
         passwordErrors
       };
     case ActionTypes.SAVE_SUCCESSS:

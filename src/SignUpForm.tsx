@@ -8,13 +8,13 @@ import {
   InputLabel,
   Paper,
   TextField
-} from '@material-ui/core';
-import Check from '@material-ui/icons/Check';
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { ReducerState } from './redux';
-import * as UserActions from './redux/userReducer';
-import { Field, FieldWrapper, UserContainer } from './User.styled';
+} from "@material-ui/core";
+import Check from "@material-ui/icons/Check";
+import * as React from "react";
+import { connect } from "react-redux";
+import { ReducerState } from "./redux";
+import * as UserActions from "./redux/userDuck";
+import { Field, FieldWrapper, UserContainer } from "./User.styled";
 
 type SignUpFormProps = {
   user: UserActions.UserReducerState;
@@ -81,7 +81,7 @@ const SignUpForm = (props: SignUpFormProps) => {
                     props.user.isEmailValid && (
                       <InputAdornment position="end">
                         <Icon>
-                          <Check style={{ color: 'green' }} />
+                          <Check style={{ color: "green" }} />
                         </Icon>
                       </InputAdornment>
                     )
@@ -116,7 +116,7 @@ const SignUpForm = (props: SignUpFormProps) => {
                     props.user.isPasswordValid && (
                       <InputAdornment position="end">
                         <Icon>
-                          <Check style={{ color: 'green' }} />
+                          <Check style={{ color: "green" }} />
                         </Icon>
                       </InputAdornment>
                     )
@@ -146,7 +146,7 @@ const SignUpForm = (props: SignUpFormProps) => {
                     props.user.isPasswordValid && (
                       <InputAdornment position="end">
                         <Icon>
-                          <Check style={{ color: 'green' }} />
+                          <Check style={{ color: "green" }} />
                         </Icon>
                       </InputAdornment>
                     )
