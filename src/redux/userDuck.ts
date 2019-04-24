@@ -1,16 +1,9 @@
 import { Dispatch } from "redux";
+import { User } from "src/types/User";
 import validateEmail from "src/utilities/validateEmail";
-import validatePassword from "src/utilities/validPassword";
+import validatePassword from "src/utilities/validatePassword";
 import { createAction } from "../utilities/actionCreator";
 import { GetState } from "./index";
-
-export type User = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
 
 export enum ActionTypes {
   CHANGE_USER = "user/changeUser",
@@ -51,6 +44,7 @@ export type UserReducerState = {
   isPasswordValid: boolean;
   emailErrors: string[];
   passwordErrors: string[];
+  isSaved: boolean;
 };
 
 type UserActions =
@@ -64,6 +58,7 @@ const DEFAULT_STATE: UserReducerState = {
   firstName: "",
   isEmailValid: false,
   isPasswordValid: false,
+  isSaved: false,
   lastName: "",
   password: "",
   passwordErrors: []
@@ -114,7 +109,7 @@ export default (
     case ActionTypes.SAVE_SUCCESSS:
       return {
         ...state,
-        ...action.payload
+        isSaved: true
       };
     default:
       return state;
