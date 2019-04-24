@@ -1,15 +1,13 @@
-import { Typography } from "@material-ui/core";
-import * as React from "react";
+import * as React from 'react';
+import './Confirmation.css';
 
 type ConfirmationProps = {};
 
 const Confirmation = (props: ConfirmationProps) => {
   return (
-    <div>
-      <Typography>
-        Sign up successful! Please check your email inbox for a confirmation
-        email.
-      </Typography>
+    <div className="confirmation">
+      <h1>Sign up successful! </h1>
+      <p>Please check your email inbox for a confirmation email.</p>
     </div>
   );
 };
