@@ -6,7 +6,7 @@
 .sign-up__form-container {
   flex-grow: 1;
   align-self: center;
-  margin: 0 1rem;
+  margin: 0 5rem;
 }
 
 .sign-up__text-field {
@@ -19,10 +19,15 @@
   align-self: center;
 }
 
-.sign-up__background::before {
+.sign-up__password-container {
+  padding-left: 1rem;
+}
+
+.sign-up__background-image::before {
   background-size: auto;
   background-repeat: no-repeat;
   background-position: center;
+  background-image: url("./static/donatello.jpg");
 }
 
 .sign-up__background {

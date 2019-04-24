@@ -4,7 +4,7 @@ import * as React from "react";
 // @ts-ignore
 import JssProvider from "react-jss/lib/JssProvider";
 import "./App.css";
-import SignUpForm from "./SignUpForm";
+import SignUp from "./SignUp";
 
 const generateClassName = createGenerateClassName();
 const jss = create({
@@ -14,7 +14,7 @@ const jss = create({
 
 const App = () => (
   <JssProvider jss={jss} generateClassName={generateClassName}>
-    <SignUpForm />
+    <SignUp />
   </JssProvider>
 );
 
