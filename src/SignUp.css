@@ -1,0 +1,50 @@
+.sign-up {
+  display: flex;
+  height: 100%;
+}
+
+.sign-up__form-container {
+  flex-grow: 1;
+  align-self: center;
+  margin: 0 5rem;
+}
+
+.sign-up__text-field {
+  margin: 1rem 0;
+}
+
+.sign-up__welcome-message {
+  color: white;
+  font-size: 24px;
+  align-self: center;
+}
+
+.sign-up__password-container {
+  padding-left: 1rem;
+}
+
+.sign-up__background-image::before {
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url('./static/donatello.jpg');
+}
+
+.sign-up__background {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 50%;
+  background-image: linear-gradient(to top left, #0033a0 50%, #0096d6 100%);
+}
+
+.sign-up__button {
+  margin-top: 2rem;
+}
+
+.sign-up__form {
+  width: 25rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
